@@ -1,35 +1,26 @@
 package com.teachmeskills.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.context.annotation.Scope;
 
+import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Objects;
 
-@Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Scope("prototype")
+@Setter
 @Entity
 @Table(name = "security")
 public class Security {
     @Id
-    @ColumnDefault("nextval('security_id_seq')")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "security_id_gen")
+    @SequenceGenerator(name = "security_id_gen", sequenceName = "security_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -46,77 +37,58 @@ public class Security {
     @Size(max = 50)
     @NotNull
     @ColumnDefault("USER")
+    @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 50)
-    private String role;
+    private Role role;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created", nullable = false)
-    private Instant created;
+    @Column(name = "created", nullable = false, updatable = false)
+    private Timestamp created;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated")
-    private Instant updated;
+    private Timestamp updated;
+
+    @PrePersist
+    protected void onCreate() {
+        created = new Timestamp(System.currentTimeMillis());
+        updated = new Timestamp(System.currentTimeMillis());
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updated = new Timestamp(System.currentTimeMillis());
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Long getId() {
-        return id;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Security security = (Security) o;
+        return Objects.equals(id, security.id) && Objects.equals(login, security.login) && Objects.equals(password, security.password) && role == security.role && Objects.equals(created, security.created) && Objects.equals(updated, security.updated) && Objects.equals(user, security.user);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, login, password, role, created, updated, user);
     }
 
-    public String getLogin() {
-        return login;
+    @Override
+    public String toString() {
+        return "Security{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", user=" + user +
+                '}';
     }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Instant getCreated() {
-        return created;
-    }
-
-    public void setCreated(Instant created) {
-        this.created = created;
-    }
-
-    public Instant getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Instant updated) {
-        this.updated = updated;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
 }

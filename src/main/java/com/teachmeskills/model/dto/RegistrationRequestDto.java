@@ -1,44 +1,53 @@
 package com.teachmeskills.model.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
-@Setter
 @Getter
-@NoArgsConstructor
-@Component
+@Setter
 public class RegistrationRequestDto {
+    @NotNull(message = "First name cannot be null")
+    @NotBlank(message = "First name cannot be blank")
+    @Size(min = 2, max = 20, message = "First name must be between 2 and 20 characters")
+    @Pattern(
+            regexp = "^[a-zA-Z-]+$",
+            message = "First name must contain only letters and hyphens"
+    )
+    private String firstname;
 
-    @Size(min = 2, max = 100)
-    @NotNull
-    private String firstName;
+    @NotNull(message = "Second name cannot be null")
+    @NotBlank(message = "Second name cannot be blank")
+    @Size(min = 2, max = 20, message = "Second name must be between 2 and 20 characters")
+    @Pattern(
+            regexp = "^[a-zA-Z-]+$",
+            message = "Second name must contain only letters and hyphens"
+    )
+    private String secondName;
 
-    @Size(min = 2, max = 100)
     @NotNull
-    private String lastName;
-
-    @NotNull
-    @Pattern(regexp = "[0-9]{12}")
-    private String telephoneNumber;
-
-    @Size(max = 255)
-    @NotNull
-    @Email
+    @Email(message = "Email should be valid")
+    @NotBlank(message = "Email cannot be blank")
     private String email;
 
     @NotNull
     @NotBlank
+    @Pattern(
+            regexp = "^\\+?[0-9]{7,}$",
+            message = "Telephone number must be at least 7 digits and may start with a '+'"
+    )
+    private String telephoneNumber;
+
+    @NotNull(message = "Login cannot be null")
+    @NotBlank(message = "Login cannot be blank")
+    @Pattern(
+            regexp = "^[a-zA-Z0-9]+$",
+            message = "Login must contain only letters and digits"
+    )
     private String login;
 
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Password cannot be null")
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
     private String password;
-
 }

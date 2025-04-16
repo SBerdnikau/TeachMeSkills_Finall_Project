@@ -1,38 +1,31 @@
 package com.teachmeskills.model.dto;
 
-import jakarta.validation.constraints.Email;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-@Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Scope("prototype")
-@Component
+@Setter
 public class UserRequestDto {
-
-    @Size(min = 2, max = 100)
+    @Size(min = 2, max = 255)
     @NotNull
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Size(min = 2,  max = 100)
+    @Size(max = 255)
     @NotNull
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Size(max = 255)
     @NotNull
-    @Pattern(regexp = "[0-9]{12}")
+    @Column(name = "telephone_number", nullable = false)
     private String telephoneNumber;
 
     @Size(max = 255)
     @NotNull
-    @Email
+    @Column(name = "email", nullable = false)
     private String email;
 }

@@ -1,39 +1,34 @@
 package com.teachmeskills.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-@Setter
+import java.sql.Timestamp;
+import java.util.Objects;
+
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 @Scope("prototype")
-@Entity
-@Table(name = "\"order\"")
+@Component
+@Entity(name = "order")
 public class Order {
     @Id
-    @ColumnDefault("nextval('order_id_seq')")
+    @SequenceGenerator(name = "order_id_seq", sequenceName = "order_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "order_id_seq",strategy = GenerationType.SEQUENCE )
     @Column(name = "id", nullable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "product_id")
-    private Leptop product;
+    private Laptop product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -48,44 +43,49 @@ public class Order {
     @Column(name = "total_sum", nullable = false)
     private Double totalSum;
 
-    public Long getId() {
-        return id;
+    @NotNull
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "created", nullable = false, updatable = false)
+    private Timestamp created;
+
+    @ColumnDefault("CURRENT_TIMESTAMP")
+    @Column(name = "updated")
+    private Timestamp updated;
+
+    @PrePersist
+    protected void onCreate() {
+        created = new Timestamp(System.currentTimeMillis());
+        updated = new Timestamp(System.currentTimeMillis());
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @PreUpdate
+    protected void onUpdate() {
+        updated = new Timestamp(System.currentTimeMillis());
     }
 
-    public Leptop getProduct() {
-        return product;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(id, order.id) && Objects.equals(product, order.product) && Objects.equals(user, order.user) && Objects.equals(amount, order.amount) && Objects.equals(totalSum, order.totalSum) && Objects.equals(created, order.created) && Objects.equals(updated, order.updated);
     }
 
-    public void setProduct(Leptop product) {
-        this.product = product;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, product, user, amount, totalSum, created, updated);
     }
 
-    public User getUser() {
-        return user;
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", product=" + product +
+                ", user=" + user +
+                ", amount=" + amount +
+                ", totalSum=" + totalSum +
+                ", created=" + created +
+                ", updated=" + updated +
+                '}';
     }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Long getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
-    }
-
-    public Double getTotalSum() {
-        return totalSum;
-    }
-
-    public void setTotalSum(Double totalSum) {
-        this.totalSum = totalSum;
-    }
-
 }

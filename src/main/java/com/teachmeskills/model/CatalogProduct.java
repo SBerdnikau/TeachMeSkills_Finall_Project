@@ -1,39 +1,28 @@
 package com.teachmeskills.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Objects;
 
-@Setter
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 @Scope("prototype")
-@Entity
-@Table(name = "catalog_products")
+@Component
+@Entity(name = "catalog_products")
 public class CatalogProduct {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "catalog_products_id_gen")
     @SequenceGenerator(name = "catalog_products_id_gen", sequenceName = "catalog_products_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "catalog_products_id_gen")
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -41,12 +30,6 @@ public class CatalogProduct {
     @NotNull
     @Column(name = "name_catalog", nullable = false, length = 100)
     private String nameCatalog;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Leptop product;
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
@@ -57,6 +40,33 @@ public class CatalogProduct {
     @Column(name = "updated")
     private Instant updated;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Laptop product;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CatalogProduct that = (CatalogProduct) o;
+        return Objects.equals(id, that.id) && Objects.equals(nameCatalog, that.nameCatalog) && Objects.equals(created, that.created) && Objects.equals(updated, that.updated) && Objects.equals(product, that.product);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nameCatalog, created, updated, product);
+    }
+
+    @Override
+    public String toString() {
+        return "CatalogProduct{" +
+                "id=" + id +
+                ", nameCatalog='" + nameCatalog + '\'' +
+                ", created=" + created +
+                ", updated=" + updated +
+                ", product=" + product +
+                '}';
+    }
 }
