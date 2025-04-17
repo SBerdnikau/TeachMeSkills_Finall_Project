@@ -101,8 +101,8 @@ create table public."order"
             on update cascade on delete cascade,
     amount     bigint                  not null,
     total_sum  double precision        not null,
-    created    timestamp default now() not null,
-    updated    timestamp default now()
+    created    timestamp default CURRENT_TIMESTAMP not null,
+    updated    timestamp default CURRENT_TIMESTAMP
 );
 
 alter table public."order"

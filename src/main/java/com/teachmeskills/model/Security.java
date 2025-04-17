@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -15,8 +17,9 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@Entity
-@Table(name = "security")
+@Scope("prototype")
+@Component
+@Entity(name = "security")
 public class Security {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "security_id_gen")

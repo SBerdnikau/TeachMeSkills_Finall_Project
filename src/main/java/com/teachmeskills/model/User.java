@@ -13,10 +13,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Scope("prototype")
 @Component
 @Entity(name = "users")
@@ -27,38 +24,26 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Size(min = 2, max = 255)
-    @NotNull
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "telephone_number", nullable = false)
     private String telephoneNumber;
 
-    @Size(max = 255)
-    @NotNull
     @Column(name = "email", nullable = false)
     private String email;
 
-    @ColumnDefault("false")
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
     @JsonIgnore
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created", nullable = false, updatable = false)
+    @Column(name = "created", updatable = false)
     private Timestamp created;
 
     @JsonIgnore
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "updated")
     private Timestamp updated;
 
